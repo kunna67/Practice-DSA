@@ -1,18 +1,17 @@
-class Solution {
+class Solution{
 public:
     int islandPerimeter(vector<vector<int>>& grid) {
-         int perimeter = 0;
-    int row = grid.size();
-    int col = grid[0].size();
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < col; j++) {
-            if (grid[i][j] == 1) {
-                perimeter += 4;
-                if (i > 0 && grid[i-1][j] == 1) perimeter -= 2;
-                if (j > 0 && grid[i][j-1] == 1) perimeter -= 2;
+        
+        int c = 0, t = 0; 
+        for(int i=0;i<grid.size();i++){
+            for(int j=0;j<grid[0].size();j++){
+                if(grid[i][j]){
+                    ++c;
+                    if(i!=0 && grid[i-1][j]==1)++t;
+                    if(j!=0 && grid[i][j-1]==1)++t;
+                }
             }
         }
+        return  4*c-2*t;
     }
-    return perimeter;
-}
 };
