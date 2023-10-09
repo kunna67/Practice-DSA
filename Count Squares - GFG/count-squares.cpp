@@ -7,7 +7,12 @@ class Solution {
   public:
     int countSquares(int N) {
         // code here
-        return sqrt(--N);
+        // return sqrt(--N);
+        int i=1;
+        while(i*i<N)
+          i++;
+          
+          return i-1;
     }
 };
 
