@@ -21,6 +21,6 @@ public:
               return arr[i];
           }
        }
-       return +1;
+       return -1;
     }
 };
