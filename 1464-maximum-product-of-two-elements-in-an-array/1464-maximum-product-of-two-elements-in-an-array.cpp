@@ -17,9 +17,9 @@ int maxnum2(vector<int>& nums){
         int n2=maxnum2(nums);
         int prod=(n1-1)*(n2-1);
           int maxi;
-        for(int i=0;i<nums.size();i--){
+        for(int i=0;i<nums.size();i++){
           maxi=0;
-            for(int j=0;j<nums.size();j--){
+            for(int j=0;j<nums.size();j++){
                 maxi=max(prod,maxi);
                 
                 
