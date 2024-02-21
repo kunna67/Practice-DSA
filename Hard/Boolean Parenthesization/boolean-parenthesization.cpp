@@ -6,70 +6,48 @@ using namespace std;
 
 // } Driver Code Ends
 // User function Template for C++
-
+const int mod = 1003;
 class Solution{
-unordered_map<string, int>mp;
-int mod = 1003;
-private:
-    int solve(string s, int i, int j, bool isTrue){
-        // Base Case
-        if(i > j) return 0;
-        
-        if(i == j){
-            if(isTrue == true){
-                return s[i] == 'T';
-            }
-            else{
-                return s[i] == 'F';
-            }
-        }
-        string temp = to_string(i);
-        temp.push_back(' ');
-        temp += to_string(j);
-        temp.push_back(' ');
-        temp += to_string(isTrue);
-        
-        if(mp.find(temp) != mp.end()) return mp[temp]%mod;
-        
-        int ans = 0;
-        for(int k = i+1; k < j; k+=2){
-            int leftF = solve(s, i, k-1, false)%mod;
-            int leftT = solve(s, i,k-1, true)%mod;
-            int rightT = solve(s,k+1, j , true)%mod;
-            int rightF = solve(s, k+1, j, false)%mod;
-            
-            if(s[k] == '&'){
-                if(isTrue == true){
-                    ans += (leftT * rightT)%mod;
-                }
-                else{
-                    ans += ((leftT * rightF)%mod + (leftF * rightT)%mod + (leftF * rightF)%mod)%mod;
-                }
-            }
-            else if(s[k] == '|'){
-                if(isTrue == true){
-                    ans += (leftT * rightF)%mod + (rightT * leftF)%mod + (leftT * rightT)%mod;
-                }
-                else{
-                    ans += (leftF * rightF)%mod;
-                }
-            }
-            else{
-                if(isTrue == true){
-                    ans += ((leftT * rightF)%mod + (rightT * leftF)%mod)%mod;
-                }
-                else{
-                    ans += ((leftF * rightF)%mod + (rightT * leftT)%mod)%mod;
-                }
-            }
-        }
-        return mp[temp] = ans%mod;
+    int dp[2][210][210];
+
+    bool bitop(char ch) {
+        return ch == '&' || ch == '|' || ch == '^';
     }
 public:
     int countWays(int N, string S){
         // code here
-        return solve(S, 0, N-1, true)%mod;
+         memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < N; i += 2) {
+            dp[1][i][i] = (S[i] == 'T');
+            dp[0][i][i] = (S[i] == 'F');
+        }
 
+        for (int i = N - 1; i >= 0; i--) {
+            for (int j = i; j < N; j++) {
+                if (i == j) continue;
+                dp[0][i][j] = dp[1][i][j] = 0;
+                for (int k = i + 1; k < j; k += 2) {
+                    if (bitop(S[k])) {
+                        int left_true = dp[1][i][k - 1];
+                        int left_false = dp[0][i][k - 1];
+                        int right_true = dp[1][k + 1][j];
+                        int right_false = dp[0][k + 1][j];
+                        if (S[k] == '|') {
+                            dp[1][i][j] = (dp[1][i][j] + (left_true * right_true) % mod + (left_true * right_false) % mod + (left_false * right_true) % mod) % mod;
+                            dp[0][i][j] = (dp[0][i][j] + (left_false * right_false) % mod) % mod;
+                        } else if (S[k] == '&') {
+                            dp[1][i][j] = (dp[1][i][j] + (left_true * right_true) % mod) % mod;
+                            dp[0][i][j] = (dp[0][i][j] + (left_false * right_false) % mod + (left_false * right_true) % mod + (left_true * right_false) % mod) % mod;
+                        } else if (S[k] == '^') {
+                            dp[1][i][j] = (dp[1][i][j] + (left_true * right_false) % mod + (left_false * right_true) % mod) % mod;
+                            dp[0][i][j] = (dp[0][i][j] + (left_true * right_true) % mod + (left_false * right_false) % mod) % mod;
+                        }
+                    }
+                }
+            }
+        }
+
+        return dp[1][0][N - 1];
     }
 };
 
@@ -79,13 +57,13 @@ int main(){
     int t;
     cin>>t;
     while(t--){
-        int N;
-        cin>>N;
-        string S;
-        cin>>S;
+        int n;
+        cin>>n;
+        string s;
+        cin>>s;
         
         Solution ob;
-        cout<<ob.countWays(N, S)<<"\n";
+        cout<<ob.countWays(n, s)<<"\n";
     }
     return 0;
 }
